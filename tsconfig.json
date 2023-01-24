@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES5",
+    "lib": ["ES6", "ES7", "ESNext"],
+    "module": "commonjs",
+    "rootDir": "src",
+    "outDir": "build",
+    "esModuleInterop": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true
+  }
+}
