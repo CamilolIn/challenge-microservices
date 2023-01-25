@@ -4,11 +4,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 var _a, _b;
 Object.defineProperty(exports, "__esModule", { value: true });
-var path_1 = __importDefault(require("path"));
-var dotenv_1 = __importDefault(require("dotenv"));
-var nodeEnv = ((_a = process.env.NODE_ENV) === null || _a === void 0 ? void 0 : _a.trim()) || 'development';
+const path_1 = __importDefault(require("path"));
+const dotenv_1 = __importDefault(require("dotenv"));
+const nodeEnv = ((_a = process.env.NODE_ENV) === null || _a === void 0 ? void 0 : _a.trim()) || 'development';
 dotenv_1.default.config({
-    path: path_1.default.resolve(process.cwd(), "".concat(nodeEnv, ".env"))
+    path: path_1.default.resolve(process.cwd(), `${nodeEnv}.env`)
 });
 exports.default = {
     NODE_ENV: nodeEnv,
