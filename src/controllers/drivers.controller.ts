@@ -7,7 +7,8 @@ import { HTTP_STATUS, successResponse } from "../utils/api.utils";
 import { errorWrapper, HTTP_ERROR } from "../utils/errors.utils";
 
 interface IDriversController {
-  getAllDrivers: IAsyncRequestHandler
+  getAllDrivers: IAsyncRequestHandler<Response<ISuccessResponse<WithId<IDriver[]>>>>
+  getByID: IAsyncRequestHandler<Response<ISuccessResponse<WithId<IDriver>>>>
   getAllDriversFromLocation: IAsyncRequestHandler<Response<ISuccessResponse<WithId<IDriver[]>>>>
 }
 
@@ -16,8 +17,26 @@ class DriversController implements IDriversController {
 
   @errorWrapper()
   async getAllDrivers(req: Request, res: Response, next: NextFunction){
-    await driversDAO.getAll();
-    res.send("OK");
+    const { available } = req.query;
+    let response;
+    if (available === "true") response = await driversDAO.getAll({
+      is_available: true
+    });
+    else response = await driversDAO.getAll()
+    const data = successResponse(response);
+    return res.status(data.statusCode).json(data);
+  }
+
+  @errorWrapper()
+  async getByID(req: Request, res: Response, next: NextFunction){
+    const { id } = req.params;
+    if (!id ) {
+      const errorMessage = "Params `id` are required";
+      throw new HTTP_ERROR(HTTP_STATUS.BAD_REQUEST, errorMessage);
+    };
+    const response = await driversDAO.getByID(id);
+    const data = successResponse(response);
+    return res.status(data.statusCode).json(data);
   }
 
   @errorWrapper()
