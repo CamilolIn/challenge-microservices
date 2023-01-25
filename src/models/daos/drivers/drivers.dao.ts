@@ -24,6 +24,7 @@ export class DriversDAO extends MongoContainer {
         $geoNear: {
           near: { type: "Point", coordinates: [location.longitude, location.latitude ]},
           distanceField: "dist.calculated",
+          query: { is_available: true },
           maxDistance: meters,
           spherical: true
         } 
