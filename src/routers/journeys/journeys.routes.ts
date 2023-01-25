@@ -1,10 +1,8 @@
 import { Router } from "express";
-import driversController from "../../controllers/drivers.controller";
+import journeysController from "../../controllers/journeys.controller";
 
 const router = Router();
 
-router.get('/', driversController.getAllDrivers);
-router.get('/:id', driversController.getByID)
-router.get('/location', driversController.getAllDriversFromLocation);
+router.post('/', journeysController.createJourney);
 
 export default router;
