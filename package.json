@@ -21,6 +21,7 @@
   "homepage": "https://github.com/CamilolIn/challenge-microservices#readme",
   "devDependencies": {
     "@types/node": "^18.11.18",
+    "@types/yup": "^0.32.0",
     "nodemon": "^2.0.20",
     "rimraf": "^4.1.2",
     "ts-node": "^10.9.1",
