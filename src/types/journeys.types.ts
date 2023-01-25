@@ -1,8 +1,8 @@
 import { ObjectId } from "mongodb";
 import { ILocation, ILocationDB } from "./shared.types";
 
-type TPaymentMethod = "cash" | "debit" | "credit" | "paypal";
-type TJourneyStatus = "assigned" | "on-going" | "completed" | "rejected";
+export type TPaymentMethod = "cash" | "debit" | "credit" | "paypal";
+export type TJourneyStatus = "assigned" | "on-going" | "completed" | "rejected";
 export interface IJourney {
   driverId: ObjectId;
   passengerId: ObjectId;

@@ -1,5 +1,5 @@
-import { Collection, WithId } from "mongodb";
-import { IJourney, IJourneyPayload } from "../../../types/journeys.types";
+import { Collection, WithId, ObjectId } from "mongodb";
+import { IJourney, IJourneyPayload, TJourneyStatus } from "../../../types/journeys.types";
 import { JourneysSchema } from "../../schemas/journeys.schema";
 import { MongoContainer } from "../mongo.container";
 
@@ -23,6 +23,19 @@ export class JourneysDAO extends MongoContainer {
     };
     return newJourney;
   }
+
+ async updateJourney(status: TJourneyStatus, id: string) {
+  const updateJourenyId = await this._collection.updateOne(
+    { _id: new ObjectId(id) },
+    { $set: { status : status } }
+  )
+  return updateJourenyId;
+ }
+
+ async findActiveJourney(filterParams = {}) {
+  const findActive = await this._collection.find(filterParams).limit(50).toArray();
+  return findActive;
+ }
 }
 
 export const journeysDAO = new JourneysDAO();
