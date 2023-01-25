@@ -7,7 +7,8 @@ import { HTTP_STATUS, successResponse } from "../utils/api.utils";
 import { errorWrapper, HTTP_ERROR } from "../utils/errors.utils";
 
 interface IDriversController {
-  getAllDrivers: IAsyncRequestHandler
+  getAllDrivers: IAsyncRequestHandler<Response<ISuccessResponse<WithId<IDriver[]>>>>
+  getByID: IAsyncRequestHandler<Response<ISuccessResponse<WithId<IDriver>>>>
   getAllDriversFromLocation: IAsyncRequestHandler<Response<ISuccessResponse<WithId<IDriver[]>>>>
 }
 
@@ -16,8 +17,27 @@ class DriversController implements IDriversController {
 
   @errorWrapper()
   async getAllDrivers(req: Request, res: Response, next: NextFunction){
-    await driversDAO.getAll();
-    res.send("OK");
+    const { available } = req.query;
+    const filterParams = available ? { is_available: available } : {};
+    const drivers = await driversDAO.getAll(filterParams);
+    const response = successResponse(drivers);
+    return res.json(response);
+  }
+
+  @errorWrapper()
+  async getByID(req: Request, res: Response, next: NextFunction){
+    const { id } = req.params;
+    if (!id ) {
+      const errorMessage = "Params `id` are required";
+      throw new HTTP_ERROR(HTTP_STATUS.BAD_REQUEST, errorMessage);
+    };
+    const driver = await driversDAO.getByID(id);
+    if (!driver) {
+      const errorMessage = "Driver not found in our records"
+      throw new HTTP_ERROR(HTTP_STATUS.NOT_FOUND, errorMessage);
+    }
+    const response = successResponse(driver);
+    return res.json(response);
   }
 
   @errorWrapper()

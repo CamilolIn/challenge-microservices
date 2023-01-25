@@ -1,4 +1,4 @@
-import { Collection, WithId } from "mongodb";
+import { Collection, ObjectId, WithId } from "mongodb";
 import { IDriver } from "../../../types/drivers.types";
 import { ILocation } from "../../../types/shared.types";
 import { MongoContainer } from "../mongo.container";
@@ -13,9 +13,14 @@ export class DriversDAO extends MongoContainer {
     this._collection.createIndex({ location: "2dsphere" });
   }
 
-  async getAll(filterParams = {}) {
-    const drivers = this._collection.find(filterParams).limit(50).toArray(); 
-    
+  async getAll(filterParams = {}): Promise<WithId<IDriver>[]>  {
+    const drivers = await this._collection.find(filterParams).limit(50).toArray(); 
+    return drivers;
+  }
+
+  async getByID(id: any){
+    const drivers = await this._collection.findOne({_id: new ObjectId(id)}); 
+    return drivers;
   }
 
   async getAllDriversFromLocation(location: ILocation, meters: number): Promise<WithId<IDriver>[]> {
@@ -28,6 +33,23 @@ export class DriversDAO extends MongoContainer {
           maxDistance: meters,
           spherical: true
         } 
+      }
+    ]).toArray();
+    return drivers;
+  }
+
+  async getDriversNearLocation(location: ILocation, limit:  number): Promise<WithId<IDriver>[]> {
+    const drivers = await this._collection.aggregate<WithId<IDriver>>([
+      {
+        $geoNear: {
+          near: { type: "Point", coordinates: [location.longitude, location.latitude ]},
+          distanceField: "dist.calculated",
+          query: { is_available: true },
+          spherical: true
+        }
+      },
+      {
+        $limit: limit
       }
     ]).toArray();
     return drivers;
